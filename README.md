@@ -23,6 +23,7 @@ A professional cross-platform mobile application designed to provide real-time c
 
 ---
 
+
 ## 📁 Project Structure
 
 ```text
@@ -75,5 +76,5 @@ Config / Utils: Centralized global application configurations, color codes, util
 ## 🚀 Getting Started
 
 1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/Martirosyan02/loan_calculator.git](https://github.com/Martirosyan02/loan_calculator.git)
+
+git clone https://github.com/Martirosyan02/loan_calculator.git
