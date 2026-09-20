@@ -72,9 +72,8 @@ Presentation Layer: Handles user interactions, UI presentation, and state flow. 
 
 Config / Utils: Centralized global application configurations, color codes, utility constants, and text strings.
 
-🚀 Getting Started
+## 🚀 Getting Started
 
-Clone the repository:
-
-Bash
-git clone [https://github.com/Martirosyan02/dramix.git](https://github.com/Martirosyan02/dramix.git)
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/Martirosyan02/loan_calculator.git](https://github.com/Martirosyan02/loan_calculator.git)
