@@ -72,9 +72,3 @@ Data Layer: Manages external data fetching from APIs (remote_sources/) and local
 Presentation Layer: Handles user interactions, UI presentation, and state flow. Built with custom widgets, modular screen tabs, and powered by BLoC for reliable state management.
 
 Config / Utils: Centralized global application configurations, color codes, utility constants, and text strings.
-
-## 🚀 Getting Started
-
-1. **Clone the repository:**
-
-git clone https://github.com/Martirosyan02/loan_calculator.git
