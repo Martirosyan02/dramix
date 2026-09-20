@@ -1,0 +1,83 @@
+# =====================================
+# OS / Environment Generated Files
+# =====================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# =====================================
+# IDEs & Editors (IntelliJ, VS Code, etc.)
+# =====================================
+*.iml
+*.ipr
+*.iws
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.vs/
+*.suo
+*.user
+
+# =====================================
+# Flutter / Dart / Pub Related
+# =====================================
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+.flutter-plugins
+
+# =====================================
+# Build Artifacts & Distribution Files
+# =====================================
+/android/app/debug
+/android/app/profile
+/android/app/release
+*.apk
+*.aab
+*.ipa
+
+# =====================================
+# Symbolication & Obfuscation
+# =====================================
+app.*.symbols
+app.*.map.json
+
+# =====================================
+# Security, Credentials & Environment (CRITICAL)
+# =====================================
+.env
+.env.*
+*.env
+ios/Runner/Secrets.plist
+android/key.properties
+*.jks
+*.keystore
+*.p12
+*.pem
+credentials.json
+
+# =====================================
+# Logs and Temporary Files
+# =====================================
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# =====================================
+# Code Quality & Analysis Tools
+# =====================================
+.sonarqube/
+lcov.info
