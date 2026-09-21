@@ -22,9 +22,9 @@ class CurrencyLocalSource {
     final lastUpdateTime = DateTime.fromMillisecondsSinceEpoch(lastUpdate);
     final now = DateTime.now();
 
-    final today10Am = DateTime(now.year, now.month, now.day, 10, 0);
+    final difference = now.difference(lastUpdateTime);
 
-    if (lastUpdateTime.isBefore(today10Am) && now.isAfter(today10Am)) {
+    if (difference.inHours >= 24) {
       return true;
     }
 

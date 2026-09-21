@@ -17,7 +17,7 @@ class CalculatorTab extends StatefulWidget {
 
 class _CalculatorTabState extends State<CalculatorTab> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final TextEditingController _amountController = TextEditingController(text: '1,000');
+  final TextEditingController _amountController = TextEditingController(text: '1');
 
   CurrencyEntity? _fromCurrency;
   CurrencyEntity? _toCurrency;
@@ -27,6 +27,15 @@ class _CalculatorTabState extends State<CalculatorTab> with SingleTickerProvider
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
+    _tabController.addListener(() {
+      if (mounted) {
+        setState(() {
+          _calculate();
+        });
+      }
+    });
+
     if (widget.currencies.isNotEmpty) {
       _fromCurrency = widget.currencies.first;
       _toCurrency = widget.currencies.firstWhere(
@@ -71,29 +80,40 @@ class _CalculatorTabState extends State<CalculatorTab> with SingleTickerProvider
     return integral;
   }
 
+  // Օգտագործում ենք առկա buyRate / sellRate դաշտերը՝ ըստ Կանխիկ/Անկախիկ թաբերի
+  double _getRate(CurrencyEntity currency, bool isCash) {
+    if (currency.code == 'AMD') return 1.0;
+    // Եթե Կանխիկ է՝ buyRate, Անկախիկ է՝ sellRate (կամ հակառակը ըստ քո ցանկության)
+    return isCash ? currency.buyRate : currency.sellRate;
+  }
+
   void _calculate() {
     if (_fromCurrency == null || _toCurrency == null) return;
 
     double amount = double.tryParse(_amountController.text.replaceAll(',', '')) ?? 0.0;
     bool isCash = _tabController.index == 0;
 
-    double getRate(CurrencyEntity currency) {
-      return isCash ? currency.buyRate : currency.sellRate;
+    if (_fromCurrency!.code == _toCurrency!.code) {
+      _result = amount;
+      return;
     }
 
-    double rateFrom = (_fromCurrency!.code == 'AMD') ? 1.0 : getRate(_fromCurrency!);
-    double rateTo = (_toCurrency!.code == 'AMD') ? 1.0 : getRate(_toCurrency!);
+    double rateFrom = _getRate(_fromCurrency!, isCash);
+    double rateTo = _getRate(_toCurrency!, isCash);
 
+    // 1. AMD -> X
     if (_fromCurrency!.code == 'AMD') {
-      _result = amount / rateTo;
-    } else if (_toCurrency!.code == 'AMD') {
-      _result = amount * rateFrom;
-    } else {
-      double amountInAmd = amount * rateFrom;
-      _result = amountInAmd / rateTo;
+      _result = rateTo > 0 ? amount / rateTo : 0.0;
     }
-
-    setState(() {});
+    // 2. X -> AMD
+    else if (_toCurrency!.code == 'AMD') {
+      _result = amount * rateFrom;
+    }
+    // 3. X -> Y (Խաչաձև փոխարկում)
+    else {
+      double amountInAmd = amount * rateFrom;
+      _result = rateTo > 0 ? amountInAmd / rateTo : 0.0;
+    }
   }
 
   @override
@@ -112,7 +132,6 @@ class _CalculatorTabState extends State<CalculatorTab> with SingleTickerProvider
             unselectedLabelColor: Colors.grey,
             indicatorColor: Colors.black87,
             indicatorWeight: 2,
-            onTap: (_) => _calculate(),
             tabs: [
               Tab(text: isArmenian ? 'Կանխիկ' : (isRussian ? 'Наличные' : 'Cash')),
               Tab(text: isArmenian ? 'Անկախիկ' : (isRussian ? 'Безналичные' : 'Non-cash')),
@@ -151,7 +170,9 @@ class _CalculatorTabState extends State<CalculatorTab> with SingleTickerProvider
                               selection: TextSelection.collapsed(offset: formatted.length),
                             );
                           }
-                          _calculate();
+                          setState(() {
+                            _calculate();
+                          });
                         },
                       ),
                     ),
@@ -177,8 +198,8 @@ class _CalculatorTabState extends State<CalculatorTab> with SingleTickerProvider
                         onChanged: (val) {
                           setState(() {
                             _fromCurrency = val;
+                            _calculate();
                           });
-                          _calculate();
                         },
                       ),
                   ],
@@ -200,8 +221,8 @@ class _CalculatorTabState extends State<CalculatorTab> with SingleTickerProvider
                         final temp = _fromCurrency;
                         _fromCurrency = _toCurrency;
                         _toCurrency = temp;
+                        _calculate();
                       });
-                      _calculate();
                     },
                   ),
                 ),
@@ -242,8 +263,8 @@ class _CalculatorTabState extends State<CalculatorTab> with SingleTickerProvider
                         onChanged: (val) {
                           setState(() {
                             _toCurrency = val;
+                            _calculate();
                           });
-                          _calculate();
                         },
                       ),
                   ],
@@ -254,7 +275,26 @@ class _CalculatorTabState extends State<CalculatorTab> with SingleTickerProvider
                   alignment: Alignment.centerRight,
                   child: Text(
                     (_fromCurrency != null && _toCurrency != null)
-                        ? '1 ${_fromCurrency!.code} = ${(_tabController.index == 0 ? _fromCurrency!.buyRate : _fromCurrency!.sellRate).toStringAsFixed(2)} ${_toCurrency!.code}'
+                        ? () {
+                      bool isCash = _tabController.index == 0;
+                      double rFrom = _getRate(_fromCurrency!, isCash);
+                      double rTo = _getRate(_toCurrency!, isCash);
+
+                      double singleRate = 0.0;
+                      if (_fromCurrency!.code == 'AMD') {
+                        singleRate = rTo > 0 ? 1 / rTo : 0.0;
+                      } else if (_toCurrency!.code == 'AMD') {
+                        singleRate = rFrom;
+                      } else {
+                        singleRate = rTo > 0 ? rFrom / rTo : 0.0;
+                      }
+
+                      String formattedRate = (singleRate < 1 && singleRate > 0)
+                          ? singleRate.toStringAsFixed(4)
+                          : singleRate.toStringAsFixed(3);
+
+                      return '1 ${_fromCurrency!.code} = $formattedRate ${_toCurrency!.code}';
+                    }()
                         : '',
                     style: TextStyle(color: Colors.grey[600], fontSize: 13),
                   ),

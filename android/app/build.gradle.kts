@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.dramix"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37//flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
